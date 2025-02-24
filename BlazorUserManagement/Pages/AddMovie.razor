@@ -1,0 +1,44 @@
+﻿@page "/add-movie"
+@using BlazorMovieApp.Models
+@using BlazorMovieApp.Services
+@inject MovieService MovieService
+@inject NavigationManager NavigationManager
+
+<h3>Добавить фильм</h3>
+
+<EditForm Model="@movie" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Название:</label>
+        <InputText class="form-control" @bind-Value="movie.Title" />
+    </div>
+    <div class="mb-3">
+        <label>Описание:</label>
+        <InputTextArea class="form-control" @bind-Value="movie.Description" />
+    </div>
+    <div class="mb-3">
+        <label>Жанр:</label>
+        <InputText class="form-control" @bind-Value="movie.Genre" />
+    </div>
+    <div class="mb-3">
+        <label>Дата выхода:</label>
+        <InputDate class="form-control" @bind-Value="movie.ReleaseDate" />
+    </div>
+    <div class="mb-3">
+        <label>Рейтинг:</label>
+        <InputNumber class="form-control" @bind-Value="movie.Rating" />
+    </div>
+    <button class="btn btn-success" type="submit">Добавить</button>
+</EditForm>
+
+@code {
+    private Movie movie = new();
+
+    async Task HandleValidSubmit()
+    {
+        await MovieService.AddMovieAsync(movie);
+        NavigationManager.NavigateTo("/");
+    }
+}
