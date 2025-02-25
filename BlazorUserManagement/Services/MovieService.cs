@@ -17,7 +17,8 @@ namespace BlazorMovieApp.Services
         // Загрузка фильмов в Movies
         public async Task RefreshMoviesList()
         {
-            var movies = await _httpClient.GetFromJsonAsync<List<Movie>>("api/movies");
+            var movies = await _httpClient.GetFromJsonAsync<List<Movie>>("movies"); // убрали "api/"
+
             if (movies != null)
             {
                 Movies = movies;

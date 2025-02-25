@@ -1,55 +1,86 @@
-﻿@page "/a"
+﻿@page "/movie"
 @inject MovieService MovieService
 @using BlazorMovieApp.Models
 @using BlazorMovieApp.Services
 @inject NavigationManager NavigationManager
 
-<h3 class="text-2xl font-bold mb-4">Список фильмов</h3>
+<h3 class="text-3xl font-bold mb-6 text-gray-800">🎬 Список фильмов</h3>
 
-@if (MovieService.Movies.Count == 0)
+<button class="bg-green-600 hover:bg-green-700 text-black font-semibold px-6 py-3 rounded-2xl shadow-md transition-all duration-200 mb-6"
+        @onclick="LoadMovies">
+    📃 Вывести все фильмы
+</button>
+
+@if (isLoading)
 {
-    <p>Загрузка фильмов...</p>
+    <p class="text-lg text-gray-600">⏳ Загрузка фильмов...</p>
 }
-else
+else if (showMovies && MovieService.Movies.Count > 0)
 {
-    <table class="table-auto w-full border">
-        <thead>
-            <tr class="bg-gray-200">
-                <th class="px-4 py-2">Название</th>
-                <th class="px-4 py-2">Описание</th>
-                <th class="px-4 py-2">Жанр</th>
-                <th class="px-4 py-2">Рейтинг</th>
-                <th class="px-4 py-2">Дата выхода</th>
-                <th class="px-4 py-2">Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var movie in MovieService.Movies)
-            {
-                <tr>
-                    <td class="border px-4 py-2">@movie.Title</td>
-                    <td class="border px-4 py-2">@movie.Description</td>
-                    <td class="border px-4 py-2">@movie.Genre</td>
-                    <td class="border px-4 py-2">@movie.Rating</td>
-                    <td class="border px-4 py-2">@movie.ReleaseDate.ToShortDateString()</td>
-                    <td class="border px-4 py-2">
-                        <button class="bg-blue-500 text-white px-2 py-1 rounded" @onclick="@(() => NavigationManager.NavigateTo($"/movies/details/{movie.Id}"))">Детали</button>
-                        <button class="bg-red-500 text-white px-2 py-1 rounded ml-2" @onclick="@(() => DeleteMovie(movie.Id))">Удалить</button>
-                    </td>
+    <div class="overflow-x-auto rounded-lg shadow-lg">
+        <table class="table-auto w-full border-collapse border border-gray-300 rounded-lg">
+            <thead>
+                <tr class="bg-gray-800 text-black">
+                    <th class="px-6 py-3 border border-gray-400 text-left text-gray-800">Название 🎥</th>
+                    <th class="px-6 py-3 border border-gray-400 text-left text-gray-800">Описание 📝</th>
+                    <th class="px-6 py-3 border border-gray-400 text-left text-gray-800">Жанр 🎭</th>
+                    <th class="px-6 py-3 border border-gray-400 text-center text-gray-800">Рейтинг ⭐</th>
+                    <th class="px-6 py-3 border border-gray-400 text-center text-gray-800">Дата выхода 📅</th>
+                    <th class="px-6 py-3 border border-gray-400 text-center text-gray-800">Действия 🛠️</th>
+
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var movie in MovieService.Movies)
+                {
+                    <tr class="hover:bg-gray-100 transition-colors duration-150">
+                        <td class="border border-gray-300 px-6 py-4 font-semibold text-gray-900">@movie.Title</td>
+                        <td class="border border-gray-300 px-6 py-4 text-gray-700 truncate max-w-xs" title="@movie.Description">
+                            @movie.Description
+                        </td>
+                        <td class="border border-gray-300 px-6 py-4 text-gray-700">@movie.Genre</td>
+                        <td class="border border-gray-300 px-6 py-4 text-center text-yellow-500 font-bold">@movie.Rating</td>
+                        <td class="border border-gray-300 px-6 py-4 text-center text-gray-700">@movie.ReleaseDate.ToShortDateString()</td>
+                        <td class="border border-gray-300 px-6 py-4 text-center">
+                            <button class="bg-blue-500 hover:bg-blue-600 text-black font-medium px-4 py-2 rounded-lg shadow transition-all duration-150 mr-2"
+                                    @onclick="@(() => NavigationManager.NavigateTo($"/movies/details/{movie.Id}"))">
+                                🔎 Детали
+                            </button>
+                            <button class="bg-red-500 hover:bg-red-600 text-black font-medium px-4 py-2 rounded-lg shadow transition-all duration-150"
+                                    @onclick="@(() => DeleteMovie(movie.Id))">
+                                🗑️ Удалить
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else if (showMovies)
+{
+    <p class="text-lg text-gray-600">🚫 Фильмы не найдены.</p>
 }
 
 @code {
-    protected override async Task OnInitializedAsync()
+    private bool showMovies = false;
+    private bool isLoading = false;
+
+    private async Task LoadMovies()
     {
-        await MovieService.RefreshMoviesList(); // Загружаем список фильмов при инициализации
+        isLoading = true;
+        showMovies = false;
+        await MovieService.RefreshMoviesList();
+        isLoading = false;
+        showMovies = true;
     }
 
     private async Task DeleteMovie(int id)
     {
         await MovieService.DeleteMovieAsync(id);
+        if (MovieService.Movies.Count == 0)
+        {
+            showMovies = false;
+        }
     }
 }
