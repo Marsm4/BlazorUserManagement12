@@ -46,9 +46,24 @@ namespace BlazorMovieApp.Services
 
         public async Task DeleteMovieAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"api/movies/{id}");
-            response.EnsureSuccessStatusCode();
-            await RefreshMoviesList(); // Обновляем список после удаления
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/movies/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    await RefreshMoviesList();
+                }
+                else
+                {
+                    Console.WriteLine($"Ошибка удаления: {response.ReasonPhrase}");
+                }
+
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Ошибка при удалении фильма: {ex.Message}");
+            }
         }
+
     }
 }
