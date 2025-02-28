@@ -27,19 +27,27 @@ namespace BlazorMovieApp.Services
 
         public async Task<Movie> GetMovieByIdAsync(int id)
         {
-            return await _httpClient.GetFromJsonAsync<Movie>($"api/movies/{id}");
+            var response = await _httpClient.GetAsync($"movies/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<Movie>();
+            }
+
+            return null;  // Если фильм не найден
         }
+
 
         public async Task AddMovieAsync(Movie movie)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/movies", movie);
+            var response = await _httpClient.PostAsJsonAsync("movies", movie);
             response.EnsureSuccessStatusCode();
             await RefreshMoviesList(); // Обновляем список после добавления
         }
 
         public async Task UpdateMovieAsync(Movie movie)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/movies/{movie.Id}", movie);
+            var response = await _httpClient.PutAsJsonAsync($"movies/{movie.Id}", movie);
             response.EnsureSuccessStatusCode();
             await RefreshMoviesList(); // Обновляем список после редактирования
         }
