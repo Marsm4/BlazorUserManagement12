@@ -51,19 +51,19 @@ namespace BlazorMovieApp.Services
                 var response = await _httpClient.DeleteAsync($"api/movies/{id}");
                 if (response.IsSuccessStatusCode)
                 {
-                    await RefreshMoviesList();
+                    await RefreshMoviesList(); // Обновляем список после удаления
                 }
                 else
                 {
                     Console.WriteLine($"Ошибка удаления: {response.ReasonPhrase}");
                 }
-
             }
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"Ошибка при удалении фильма: {ex.Message}");
             }
         }
+
 
     }
 }

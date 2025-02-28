@@ -32,7 +32,7 @@
         var user = await UserService.LoginAsync(loginUser);
         if (user != null)
         {
-            Navigation.NavigateTo(user.Role == "Admin" ? "/movie" : "/user");
+            Navigation.NavigateTo(user.Role == "Admin" ? "/admin" : "/user");
         }
     }
 }
