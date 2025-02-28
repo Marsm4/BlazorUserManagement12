@@ -43,7 +43,7 @@ else if (showMovies && MovieService.Movies.Count > 0)
                         <td class="border border-gray-300 px-6 py-4 text-center text-gray-700">@movie.ReleaseDate.ToShortDateString()</td>
                         <td class="border border-gray-300 px-6 py-4 text-center">
                             <button class="bg-blue-500 hover:bg-blue-600 text-black font-medium px-4 py-2 rounded-lg shadow transition-all duration-150 mr-2"
-                                    @onclick="@(() => NavigationManager.NavigateTo($"/movies/details/{movie.Id}"))">
+                                    @onclick="@(() => NavigationManager.NavigateTo($"/movies/{movie.Id}"))">
                                 🔎 Детали
                             </button>
                             <button class="bg-red-500 hover:bg-red-600 text-black font-medium px-4 py-2 rounded-lg shadow transition-all duration-150"
