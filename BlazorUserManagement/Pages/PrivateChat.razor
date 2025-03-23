@@ -1,0 +1,48 @@
+﻿@page "/private-chat/{UserId:int}"
+@using BlazorUserManagement.Models
+@using BlazorUserManagement.Services
+@inject ChatService ChatService
+
+<h3>Личный чат с @otherUserName</h3>
+
+<div>
+    @foreach (var message in privateMessages)
+    {
+        <div>
+            <strong>@message.UserName:</strong> @message.Message <em>(@message.Timestamp)</em>
+        </div>
+    }
+</div>
+
+<input @bind="newPrivateMessage" placeholder="Введите сообщение..." />
+<button @onclick="SendPrivateMessage">Отправить</button>
+
+@code {
+    [Parameter]
+    public int UserId { get; set; }
+
+    private List<ChatMessage> privateMessages = new List<ChatMessage>();
+    private string newPrivateMessage;
+    private string userName = "User1"; // Замените на реальное имя пользователя
+    private string otherUserName = "User2"; // Замените на реальное имя другого пользователя
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Загрузите сообщения для личного чата
+        privateMessages = await ChatService.GetPrivateMessagesAsync(UserId);
+    }
+
+    private async Task SendPrivateMessage()
+    {
+        var message = new ChatMessage
+            {
+                UserName = userName,
+                Message = newPrivateMessage,
+                Timestamp = DateTime.Now
+            };
+
+        await ChatService.SendPrivateMessageAsync(UserId, message);
+        privateMessages.Add(message);
+        newPrivateMessage = string.Empty;
+    }
+}

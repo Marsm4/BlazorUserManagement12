@@ -12,4 +12,5 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<MovieService>();
+builder.Services.AddScoped<ChatService>();
 await builder.Build().RunAsync();

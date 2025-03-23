@@ -1,0 +1,21 @@
+﻿@page "/movies"
+@using BlazorMovieApp.Services
+@inject MovieService MovieService
+
+<h3>Фильмы</h3>
+
+<ul>
+    @foreach (var movie in MovieService.Movies)
+    {
+        <li>
+            <a href="/chat/@movie.Id">@movie.Title</a>
+        </li>
+    }
+</ul>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await MovieService.RefreshMoviesList();
+    }
+}

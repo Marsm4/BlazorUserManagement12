@@ -1,0 +1,48 @@
+﻿@page "/chat/{MovieId:int}"
+@using BlazorUserManagement.Models
+@using BlazorUserManagement.Services
+@inject ChatService ChatService
+@inject NavigationManager NavigationManager
+
+<h3>Чат для фильма</h3>
+
+<div>
+    @foreach (var message in messages)
+    {
+        <div>
+            <strong>@message.UserName:</strong> @message.Message <em>(@message.Timestamp)</em>
+        </div>
+    }
+</div>
+
+<input @bind="newMessage" placeholder="Введите сообщение..." />
+<button @onclick="SendMessage">Отправить</button>
+
+@code {
+    [Parameter]
+    public int MovieId { get; set; }
+
+    private List<ChatMessage> messages = new List<ChatMessage>();
+    private string newMessage;
+    private string userName = "User1"; // Замените на реальное имя пользователя
+
+    protected override async Task OnParametersSetAsync()
+    {
+        messages = await ChatService.GetMessagesByMovieIdAsync(MovieId);
+    }
+
+    private async Task SendMessage()
+    {
+        var message = new ChatMessage
+            {
+                MovieId = MovieId,
+                UserName = userName,
+                Message = newMessage,
+                Timestamp = DateTime.Now
+            };
+
+        await ChatService.SendMessageAsync(message);
+        messages.Add(message);
+        newMessage = string.Empty;
+    }
+}
